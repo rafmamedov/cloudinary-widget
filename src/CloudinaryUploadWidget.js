@@ -35,12 +35,9 @@ class CloudinaryUploadWidget extends Component {
                 signature: result.info.signature,
               };
 
-              this.props.setPublicId(imgDataPost.publicId);
-
               axios.post(SAVEIMG, imgDataPost)
                 .then(response => {
                   console.log(response);
-                  this.props.getImage();
                 })
                 .catch(error => {
                   console.log(error);

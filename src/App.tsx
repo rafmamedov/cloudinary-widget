@@ -1,41 +1,43 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import CloudinaryUploadWidget from './CloudinaryUploadWidget';
 import axios from 'axios';
 
 const URL = 'https://www.albedosunrise.com/images/getUrl/';
+const GETIMAGES = 'https://www.albedosunrise.com/images/mainPage';
 
 type Image = {
-  ratio: number;
-  url: string;
+  publicId: string;
+  imageUrl: string;
+  currentRatio: number;
 }
 
 function App() {
-  const [publicId, setPublicId] = useState('');
   const [images, setImages] = useState<Image[]>([]);
 
-  const getImage = async () => {
-    await axios.get(URL + publicId)
+  const getImages = async () => {
+    await axios.get(GETIMAGES)
       .then(response => {
-        setImages(current => [...current, response.data]);
+        setImages(response.data);
   })};
 
-  const getRatio05 = images.find(img => img.ratio === 0.5)?.url || '';
+  useEffect(() => {
+    getImages();
+  }, []);
 
-  const getRatio1 = images.find(img => img.ratio === 1)?.url || '';
+  const getRatio05 = images.find(img => img.currentRatio === 0.5)?.imageUrl || '';
 
-  const getRatio15 = images.find(img => img.ratio === 1.5)?.url || '';
+  const getRatio1 = images.find(img => img.currentRatio === 1)?.imageUrl || '';
 
-  const getRatio2 = images.find(img => img.ratio === 2)?.url || '';
+  const getRatio15 = images.find(img => img.currentRatio === 1.5)?.imageUrl || '';
+
+  const getRatio2 = images.find(img => img.currentRatio === 2)?.imageUrl || '';
 
   return (
     <div className="App">
       <header className="App-header">
         Cloudinary upload widget
-        <CloudinaryUploadWidget
-          setPublicId={setPublicId}
-          getImage={getImage}
-        />
+        <CloudinaryUploadWidget />
       </header>
 
       <section className="gallery">
