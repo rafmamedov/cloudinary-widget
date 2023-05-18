@@ -5,15 +5,28 @@ import axios from 'axios';
 
 const URL = 'https://www.albedosunrise.com/images/getUrl/';
 
+type Image = {
+  ratio: number;
+  url: string;
+}
+
 function App() {
   const [publicId, setPublicId] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [images, setImages] = useState<Image[]>([]);
 
   const getImage = async () => {
     await axios.get(URL + publicId)
       .then(response => {
-        setImageUrl(response.data.url);
+        setImages(current => [...current, response.data]);
   })};
+
+  const getRatio05 = images.find(img => img.ratio === 0.5)?.url || '';
+
+  const getRatio1 = images.find(img => img.ratio === 1)?.url || '';
+
+  const getRatio15 = images.find(img => img.ratio === 1.5)?.url || '';
+
+  const getRatio2 = images.find(img => img.ratio === 2)?.url || '';
 
   return (
     <div className="App">
@@ -26,10 +39,10 @@ function App() {
       </header>
 
       <section className="gallery">
-        <div className="one"><img src="" alt="" /></div>
-        <div className="two"><img src="" alt="" /></div>
-        <div className="three"><img src="" alt="" /></div>
-        <div className="four"><img src={imageUrl} alt="" /></div>
+        <div className="one"><img src={getRatio05} alt="" /></div>
+        <div className="two"><img src={getRatio1} alt="" /></div>
+        <div className="three"><img src={getRatio15} alt="" /></div>
+        <div className="four"><img src={getRatio2} alt="" /></div>
       </section>
     </div>
   );
