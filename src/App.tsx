@@ -1,24 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import CloudinaryUploadWidget from './CloudinaryUploadWidget';
+import axios from 'axios';
+
+const URL = 'https://www.albedosunrise.com/images/getUrl/';
 
 function App() {
+  const [publicId, setPublicId] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+
+  const getImage = async () => {
+    await axios.get(URL + publicId)
+      .then(response => {
+        setImageUrl(response.data.url);
+  })};
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        Cloudinary upload widget
+        <CloudinaryUploadWidget
+          setPublicId={setPublicId}
+          getImage={getImage}
+        />
       </header>
+
+      <section className="gallery">
+        <div className="one"><img src="" alt="" /></div>
+        <div className="two"><img src="" alt="" /></div>
+        <div className="three"><img src="" alt="" /></div>
+        <div className="four"><img src={imageUrl} alt="" /></div>
+      </section>
     </div>
   );
 }
