@@ -46,17 +46,17 @@ class CloudinaryUploadWidget extends Component {
                 paintingHeight: this.state.height,
               };
 
-              console.log(imageDataPost);
-
               axios.post(SAVEIMAGE, imageDataPost)
                 .then(response => {
                   console.log(response);
                   
                   axios.get(GETROOMVIEW + imageDataPost.publicId)
                     .then(response => {
-                      console.log(response);
-
                       this.props.setRoomview(response.data);
+                      this.setState({
+                        height: 0,
+                        width: 0,
+                      });
                 })
                 })
                 .catch(error => {
