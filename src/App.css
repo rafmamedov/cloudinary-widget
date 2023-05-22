@@ -13,6 +13,15 @@
   color: white;
 }
 
+.room {
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.room-image {
+  max-width: 1000px;
+}
+
 .gallery {
   margin: 0 auto;
   padding: 20px;

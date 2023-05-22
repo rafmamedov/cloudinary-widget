@@ -1,15 +1,24 @@
-import React, { Component } from "react";
+import { Component } from "react";
 import axios from "axios";
 
 const SIGNATURE = 'https://www.albedosunrise.com/images/getSignature';
-const SAVEIMG = 'https://www.albedosunrise.com/images'
+const SAVEIMAGE = 'https://www.albedosunrise.com/images';
+const GETROOMVIEW = 'https://www.albedosunrise.com/images/getRoomViews/';
 
 class CloudinaryUploadWidget extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      height: 0,
+      width: 0,
+    }
+  }
+
   componentDidMount() {
     const cloudName = "dq415fvzp"; // replace with your own cloud name
     const uploadPreset = "signed-image"; // replace with your own upload preset
 
-  axios.get(SIGNATURE)
+    axios.get(SIGNATURE)
       .then(response => {
         const uploadSignature = response.data.signature;
         const uploadSignatureTimestamp = response.data.timestamp;
@@ -27,24 +36,36 @@ class CloudinaryUploadWidget extends Component {
             if (!error && result && result.event === "success") {
               console.log("Done! Here is the image info: ", result.info);
 
-              const imgDataPost = {
+              const imageDataPost = {
                 publicId: result.info.public_id,
                 height: result.info.height,
                 width: result.info.width,
                 version: result.info.version,
                 signature: result.info.signature,
+                paintingWidth: this.state.width,
+                paintingHeight: this.state.height,
               };
 
-              axios.post(SAVEIMG, imgDataPost)
+              console.log(imageDataPost);
+
+              axios.post(SAVEIMAGE, imageDataPost)
                 .then(response => {
                   console.log(response);
+                  
+                  axios.get(GETROOMVIEW + imageDataPost.publicId)
+                    .then(response => {
+                      console.log(response);
+
+                      this.props.setRoomview(response.data);
+                })
                 })
                 .catch(error => {
                   console.log(error);
-                })
+                });
             }
           }
         );
+
         document.getElementById("upload_widget").addEventListener(
           "click",
           function () {
@@ -63,10 +84,46 @@ class CloudinaryUploadWidget extends Component {
   }
 
   render() {
+    const handleChangeHeight = (event) => {
+      this.setState({
+        height: +event.target.value,
+        width: this.state.width,
+      });
+    };
+  
+    const handleChangeWidth = (event) => {
+      this.setState({
+        height: this.state.height,
+        width: +event.target.value,
+      });
+    };
+
     return (
-      <button id="upload_widget" className="cloudinary-button">
-        Upload
-      </button>
+      <>
+        <label>
+          Height:
+          <input
+            type="text"
+            name="height"
+            value={this.state.height}
+            onChange={handleChangeHeight}
+          />
+        </label>
+
+        <label>
+          Width:
+          <input
+            type="text"
+            name="width"
+            value={this.state.width}
+            onChange={handleChangeWidth}
+          />
+        </label>
+
+        <button id="upload_widget" className="cloudinary-button">
+          Upload
+        </button>
+      </>
     );
   }
 }
